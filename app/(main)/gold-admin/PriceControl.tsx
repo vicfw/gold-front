@@ -11,41 +11,40 @@ const PriceControl = () => {
   const [sellPriceInput, setSellPriceInput] = useState<number | undefined>();
   const [buyPrice, setBuyPrice] = useState<number | undefined>();
   const [sellPrice, setSellPrice] = useState<number | undefined>();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const createOrUpdatePrice = async (mode: string) => {
+  const createOrUpdatePrice = async (type: string) => {
+    if (!buyPriceInput || !sellPriceInput) return;
+    const inputPrice = type === "buy" ? buyPriceInput : sellPriceInput;
+    const setPrice = type === "buy" ? setBuyPrice : setSellPrice;
+
     const service = new PriceService();
-    await service.createOrUpdatePrice(
-      mode === "buy" ? { buy: buyPriceInput } : { sell: sellPriceInput }
-    );
-    if (mode === "buy") {
-      setBuyPrice(buyPriceInput);
-      setBuyPriceInput(undefined);
+    setIsLoading(true);
+    await service.createOrUpdatePrice({ [type]: inputPrice });
+
+    setPrice(inputPrice);
+    type === "buy" ? setBuyPriceInput(undefined) : setSellPriceInput(undefined);
+    setIsLoading(false);
+  };
+
+  const updatePriceByFive = async (operation: string, type: string) => {
+    const currentPrice = type === "buy" ? buyPrice : sellPrice;
+    if (currentPrice! < 5000 && operation === "decrease") return;
+
+    const service = new PriceService();
+    const newPrice =
+      operation === "increase" ? currentPrice! + 5000 : currentPrice! - 5000;
+
+    const updateObject = { [type]: newPrice };
+    setIsLoading(true);
+    const { data } = await service.createOrUpdatePrice(updateObject);
+
+    if (type === "buy") {
+      setBuyPrice(data.data.price.buy);
     } else {
-      setSellPrice(sellPriceInput);
-      setSellPriceInput(undefined);
+      setSellPrice(data.data.price.sell);
     }
-  };
-
-  const updateBuyPriceByFive = async (operation: string) => {
-    if (buyPrice! < 5000 && operation === "decrease") return;
-    const service = new PriceService();
-    const { data } = await service.createOrUpdatePrice(
-      operation === "increase"
-        ? { buy: buyPrice! + 5000 }
-        : { buy: buyPrice! - 5000 }
-    );
-    setBuyPrice(data.data.price.buy);
-  };
-
-  const updateSellPriceByFive = async (operation: string) => {
-    if (sellPrice! < 5000 && operation === "decrease") return;
-    const service = new PriceService();
-    const { data } = await service.createOrUpdatePrice(
-      operation === "increase"
-        ? { sell: sellPrice! + 5000 }
-        : { sell: sellPrice! - 5000 }
-    );
-    setSellPrice(data.data.price.sell);
+    setIsLoading(false);
   };
 
   const getPrices = async () => {
@@ -75,17 +74,26 @@ const PriceControl = () => {
         <CardContent className="p-6">
           <div className="flex justify-between gap-1 lg:gap-0 ">
             <div className="flex flex-col gap-5">
-              <Button variant="secondary" className="lg:py-6 lg:px-10">
+              <Button
+                variant="success"
+                className="lg:py-6 lg:px-10 cursor-default"
+              >
                 <div>
                   <p>{buyPrice?.toLocaleString()}</p>
                   <p>قیمت خرید</p>
                 </div>
               </Button>
               <div className="flex gap-5 justify-between">
-                <Button onClick={() => updateBuyPriceByFive("increase")}>
+                <Button
+                  onClick={() => updatePriceByFive("increase", "buy")}
+                  disabled={isLoading}
+                >
                   + 5 هزار
                 </Button>
-                <Button onClick={() => updateBuyPriceByFive("decrease")}>
+                <Button
+                  onClick={() => updatePriceByFive("decrease", "buy")}
+                  disabled={isLoading}
+                >
                   - 5 هزار
                 </Button>
               </div>
@@ -96,21 +104,35 @@ const PriceControl = () => {
                   type="number"
                   onChange={handleBuyPriceChange}
                 />
-                <Button onClick={() => createOrUpdatePrice("buy")}>+</Button>
+                <Button
+                  onClick={() => createOrUpdatePrice("buy")}
+                  disabled={isLoading}
+                >
+                  +
+                </Button>
               </div>
             </div>
             <div className="flex flex-col gap-5">
-              <Button variant="destructive" className="lg:py-6 lg:px-10">
+              <Button
+                variant="destructive"
+                className="lg:py-6 lg:px-10 cursor-default hover:bg-destructive"
+              >
                 <div>
                   <p>{sellPrice?.toLocaleString()}</p>
                   <p>قیمت فروش</p>
                 </div>
               </Button>
               <div className="flex justify-between gap-5">
-                <Button onClick={() => updateSellPriceByFive("increase")}>
+                <Button
+                  onClick={() => updatePriceByFive("increase", "sell")}
+                  disabled={isLoading}
+                >
                   + 5 هزار
                 </Button>
-                <Button onClick={() => updateSellPriceByFive("decrease")}>
+                <Button
+                  onClick={() => updatePriceByFive("decrease", "sell")}
+                  disabled={isLoading}
+                >
                   - 5 هزار
                 </Button>
               </div>
@@ -121,7 +143,12 @@ const PriceControl = () => {
                   placeholder="مبلغ فروش"
                   type="number"
                 />
-                <Button onClick={() => createOrUpdatePrice("sell")}>+</Button>
+                <Button
+                  onClick={() => createOrUpdatePrice("sell")}
+                  disabled={isLoading}
+                >
+                  +
+                </Button>
               </div>
             </div>
           </div>

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import * as React from "react";
 import Header from "./Header";
-import { User } from "@/types";
 import { useStore } from "@/store/store";
 
 type TLayoutComponent = { children: React.ReactNode };
@@ -11,6 +10,7 @@ type TLayoutComponent = { children: React.ReactNode };
 const LayoutComponent = (props: TLayoutComponent) => {
   const { children } = props;
   const [open, setOpen] = React.useState(false);
+  const { user } = useStore((state) => state);
   const handleToggleSidebar = () => {
     setOpen((prev) => !prev);
   };
@@ -20,7 +20,7 @@ const LayoutComponent = (props: TLayoutComponent) => {
       <div
         className={` ${
           open ? "w-0 p-0" : "w-60 p-3 "
-        } flex flex-col h-screen bg-black shadow duration-300`}
+        } flex flex-col h-screen bg-primary shadow duration-300`}
       >
         <div className="space-y-3">
           <div className="flex items-center justify-between">
@@ -51,7 +51,9 @@ const LayoutComponent = (props: TLayoutComponent) => {
                         d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                       />
                     </svg>
-                    <span className="text-gray-100">Home</span>
+                    <span className="text-gray-100">
+                      {user.role === "admin" ? "Admin" : "User"}
+                    </span>
                   </Link>
                 </li>
                 <li className="rounded-sm">

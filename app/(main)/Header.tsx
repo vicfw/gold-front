@@ -30,7 +30,7 @@ const Header = (props: THeader) => {
   };
 
   return (
-    <div className="h-16 bg-black w-full flex items-center justify-between px-5">
+    <div className="h-16 bg-primary w-full flex items-center justify-between px-5">
       <button onClick={handleToggleSidebar}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -54,7 +54,7 @@ const Header = (props: THeader) => {
             <ChevronDown color="#fff" />
           </div>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56 bg-black text-white">
+        <DropdownMenuContent className="w-56 bg-primary text-white">
           <DropdownMenuLabel>خوش آمدید</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem className="cursor-pointer" onClick={logout}>
