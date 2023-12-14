@@ -74,6 +74,7 @@ const SellBuy = () => {
         openModal={openModal}
         type={type}
         toggleModalHandler={toggleModalHandler}
+        price={type === "buy" ? prices?.buy : prices?.sell}
       />
     </>
   );
