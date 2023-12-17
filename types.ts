@@ -13,3 +13,14 @@ export interface Price {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Order {
+  _id: string;
+  type: string;
+  status: string;
+  amount: number;
+  price: number;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+}

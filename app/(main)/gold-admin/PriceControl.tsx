@@ -4,26 +4,38 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { PriceService } from "@/services/price";
+import { useStore } from "@/store/store";
 import React, { ChangeEvent, useEffect, useState } from "react";
 
 const PriceControl = () => {
+  const { socket } = useStore((state) => state);
+
   const [buyPriceInput, setBuyPriceInput] = useState<number | undefined>();
   const [sellPriceInput, setSellPriceInput] = useState<number | undefined>();
   const [buyPrice, setBuyPrice] = useState<number | undefined>();
   const [sellPrice, setSellPrice] = useState<number | undefined>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const createOrUpdatePrice = async (type: string) => {
-    if (!buyPriceInput || !sellPriceInput) return;
+  const createOrUpdatePriceHandler = async (type: string) => {
+    if (
+      (!buyPriceInput && type === "buy") ||
+      (!sellPriceInput && type === "sell")
+    )
+      return;
+
+    console.log(sellPriceInput, "sellPriceInput");
+
     const inputPrice = type === "buy" ? buyPriceInput : sellPriceInput;
     const setPrice = type === "buy" ? setBuyPrice : setSellPrice;
 
     const service = new PriceService();
     setIsLoading(true);
     await service.createOrUpdatePrice({ [type]: inputPrice });
+    socket.emit("updatePrice");
 
     setPrice(inputPrice);
     type === "buy" ? setBuyPriceInput(undefined) : setSellPriceInput(undefined);
+
     setIsLoading(false);
   };
 
@@ -36,15 +48,21 @@ const PriceControl = () => {
       operation === "increase" ? currentPrice! + 5000 : currentPrice! - 5000;
 
     const updateObject = { [type]: newPrice };
-    setIsLoading(true);
-    const { data } = await service.createOrUpdatePrice(updateObject);
+    try {
+      setIsLoading(true);
 
-    if (type === "buy") {
-      setBuyPrice(data.data.price.buy);
-    } else {
-      setSellPrice(data.data.price.sell);
+      const { data } = await service.createOrUpdatePrice(updateObject);
+
+      if (type === "buy") {
+        setBuyPrice(data.data.price.buy);
+      } else {
+        setSellPrice(data.data.price.sell);
+      }
+      socket.emit("updatePrice");
+    } catch (e) {
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const getPrices = async () => {
@@ -68,8 +86,9 @@ const PriceControl = () => {
   useEffect(() => {
     getPrices();
   }, []);
+
   return (
-    <div className="grid lg:grid-cols-2 grid-cols-1 gap-5 lg:gap-10">
+    <div className="">
       <Card>
         <CardContent className="p-6">
           <div className="flex justify-between gap-1 lg:gap-0 ">
@@ -105,7 +124,7 @@ const PriceControl = () => {
                   onChange={handleBuyPriceChange}
                 />
                 <Button
-                  onClick={() => createOrUpdatePrice("buy")}
+                  onClick={() => createOrUpdatePriceHandler("buy")}
                   disabled={isLoading}
                 >
                   +
@@ -144,7 +163,7 @@ const PriceControl = () => {
                   type="number"
                 />
                 <Button
-                  onClick={() => createOrUpdatePrice("sell")}
+                  onClick={() => createOrUpdatePriceHandler("sell")}
                   disabled={isLoading}
                 >
                   +
@@ -154,8 +173,6 @@ const PriceControl = () => {
           </div>
         </CardContent>
       </Card>
-
-      <div>order</div>
     </div>
   );
 };

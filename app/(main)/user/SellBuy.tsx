@@ -1,13 +1,15 @@
 "use client";
-import Modal from "@/components/Modal";
+import BuySellModal from "@/components/BuySellModal";
 import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { PriceService } from "@/services/price";
 import { Price } from "@/types";
+import { useStore } from "@/store/store";
 export type Type = "sell" | "buy" | "";
 const SellBuy = () => {
+  const { socket } = useStore((state) => state);
   const [openModal, setOpenModal] = useState(false);
   const [type, setType] = useState<Type>("");
   const [prices, setPrices] = useState<Price>();
@@ -28,9 +30,17 @@ const SellBuy = () => {
     getPrices();
   }, []);
 
+  useEffect(() => {
+    if (socket) {
+      socket.on("updatedPrice_fetch", () => {
+        getPrices();
+      });
+    }
+  }, [socket]);
+
   return (
     <>
-      <Card>
+      <Card className="h-full overflow-auto lg:max-h-[110px] max-h-[300px]">
         <CardContent className="flex justify-center flex-col gap-3">
           <div className="flex justify-center gap-10">
             <span>مبالغ به ریال میباشد</span>
@@ -70,7 +80,7 @@ const SellBuy = () => {
           </div>
         </CardContent>
       </Card>
-      <Modal
+      <BuySellModal
         openModal={openModal}
         type={type}
         toggleModalHandler={toggleModalHandler}

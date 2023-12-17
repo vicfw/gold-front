@@ -4,16 +4,26 @@ import Link from "next/link";
 import * as React from "react";
 import Header from "./Header";
 import { useStore } from "@/store/store";
+import io from "socket.io-client";
 
 type TLayoutComponent = { children: React.ReactNode };
 
 const LayoutComponent = (props: TLayoutComponent) => {
   const { children } = props;
   const [open, setOpen] = React.useState(false);
-  const { user } = useStore((state) => state);
+  const socketRef = React.useRef<any>();
+  const { user, setSocket } = useStore((state) => state);
   const handleToggleSidebar = () => {
     setOpen((prev) => !prev);
   };
+
+  React.useEffect(() => {
+    const socket = io(process.env.NEXT_PUBLIC_API_BASE_URL!, {
+      // secure: true,
+      transports: ["websocket"],
+    });
+    setSocket(socket);
+  }, []);
 
   return (
     <>

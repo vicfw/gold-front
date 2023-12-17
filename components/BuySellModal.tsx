@@ -10,22 +10,27 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
+import { OrderService } from "@/services/order";
+import { useStore } from "@/store/store";
 import React, { ChangeEvent, useState } from "react";
 
-interface IModal {
+interface IBuySellModal {
   openModal: boolean;
   type: Type;
   toggleModalHandler: () => void;
   price: number | undefined;
 }
 
-const Modal: React.FC<IModal> = ({
+const BuySellModal: React.FC<IBuySellModal> = ({
   openModal,
   type,
   toggleModalHandler,
   price: priceProp,
 }) => {
+  const { socket } = useStore((state) => state);
+  const { toast } = useToast();
   const isBuy = type === "buy";
   const [amount, setAmount] = useState<number | undefined>();
   const [price, setPrice] = useState<string>("");
@@ -61,6 +66,19 @@ const Modal: React.FC<IModal> = ({
   const handleInputFocus = () => {
     price && setPrice("");
     amount && setAmount(undefined);
+  };
+
+  const handleOrderSubmit = async () => {
+    if (!price || !amount) return;
+
+    const service = new OrderService();
+    await service.createOrder({ type, price: parseInt(price), amount });
+    socket.emit("orderSubmit");
+    toast({
+      title: "سفارش شما ثبت شد.",
+      variant: isBuy ? "success" : "destructive",
+    });
+    toggleModalHandler();
   };
 
   return (
@@ -123,11 +141,13 @@ const Modal: React.FC<IModal> = ({
           >
             انصراف
           </Button>
-          <Button type="submit">{isBuy ? "خرید" : "فروش"}</Button>
+          <Button type="submit" onClick={handleOrderSubmit}>
+            {isBuy ? "خرید" : "فروش"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default Modal;
+export default BuySellModal;
