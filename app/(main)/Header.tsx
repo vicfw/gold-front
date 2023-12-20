@@ -8,6 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 import { AuthService } from "@/services/auth";
 import { useStore } from "@/store/store";
 import { ChevronDown } from "lucide-react";
@@ -30,27 +31,34 @@ const Header = (props: THeader) => {
   };
 
   return (
-    <div className="h-16 bg-primary w-full flex items-center justify-between px-5">
-      <button onClick={handleToggleSidebar}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="w-6 h-6 text-white"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-          />
-        </svg>
-      </button>
+    <div
+      className={cn(
+        "h-16 bg-primary w-full flex items-center  px-5",
+        user.role === "admin" ? "justify-between" : "justify-end"
+      )}
+    >
+      {user.role === "admin" ? (
+        <button onClick={handleToggleSidebar}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-6 h-6 text-white"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+            />
+          </svg>
+        </button>
+      ) : null}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <div className="flex items-center gap-2 cursor-pointer">
-            <span className="text-white">{user.name}</span>
+            <span className="text-white">سلام {user.name}</span>
             <ChevronDown color="#fff" />
           </div>
         </DropdownMenuTrigger>

@@ -5,6 +5,10 @@ import { redirect } from "next/navigation";
 import PriceControl from "./PriceControl";
 import OrderTable from "@/components/OrderTable";
 
+export const metadata = {
+  title: "Admin Dashboard",
+};
+
 const AdminPage = async () => {
   const cookie = cookies().get("jwt")?.value;
   const result = await isLoggedIn(cookie).catch((e) => redirect("/login"));

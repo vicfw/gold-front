@@ -43,9 +43,9 @@ const SellBuy = () => {
       <Card className="h-full overflow-auto lg:max-h-[110px] max-h-[300px]">
         <CardContent className="flex justify-center flex-col gap-3">
           <div className="flex justify-center gap-10">
-            <span>مبالغ به ریال میباشد</span>
+            <span className="text-sm lg:text-md">مبالغ به ریال میباشد</span>
             {prices ? (
-              <span>
+              <span className="text-sm lg:text-md">
                 اپدیت قیمت {format(new Date(prices?.updatedAt), "HH:mm:ss")}
               </span>
             ) : null}
@@ -53,7 +53,7 @@ const SellBuy = () => {
           <div className="flex justify-between ">
             <Button
               variant="success"
-              className="py-6 px-10 bg-green-600"
+              className="lg:py-6 lg:px-10 p-2 bg-green-600"
               onClick={() => {
                 toggleModalHandler();
                 setTypeHandler("buy");
@@ -66,7 +66,7 @@ const SellBuy = () => {
             </Button>
             <Button
               variant="destructive"
-              className="py-6 px-10"
+              className="lg:py-6 lg:px-10 p-2"
               onClick={() => {
                 toggleModalHandler();
                 setTypeHandler("sell");

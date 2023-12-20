@@ -90,13 +90,10 @@ const PriceControl = () => {
   return (
     <div className="">
       <Card>
-        <CardContent className="p-6">
-          <div className="flex justify-between gap-1 lg:gap-0 ">
+        <CardContent className="p-2 lg:p-6">
+          <div className="grid grid-cols-2 gap-2">
             <div className="flex flex-col gap-5">
-              <Button
-                variant="success"
-                className="lg:py-6 lg:px-10 cursor-default"
-              >
+              <Button variant="success" className=" cursor-default p-2">
                 <div>
                   <p>{buyPrice?.toLocaleString()}</p>
                   <p>قیمت خرید</p>
@@ -134,7 +131,7 @@ const PriceControl = () => {
             <div className="flex flex-col gap-5">
               <Button
                 variant="destructive"
-                className="lg:py-6 lg:px-10 cursor-default hover:bg-destructive"
+                className="cursor-default hover:bg-destructive p-2"
               >
                 <div>
                   <p>{sellPrice?.toLocaleString()}</p>

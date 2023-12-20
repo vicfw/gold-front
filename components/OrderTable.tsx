@@ -13,10 +13,11 @@ import { OrderService } from "@/services/order";
 import { Order } from "@/types";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ConfirmModal from "./ConfirmModal";
 import { DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { useStore } from "@/store/store";
+import { useToast } from "@/components/ui/use-toast";
 
 type TOrderTable = {
   renderPage: "user" | "admin";
@@ -24,13 +25,12 @@ type TOrderTable = {
 
 const OrderTable = (props: TOrderTable) => {
   const { renderPage } = props;
-
+  const { toast } = useToast();
   const { socket } = useStore((state) => state);
 
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>();
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
-  const [openNotificationModal, setOpenNotificationModal] = useState(false);
   const [orderData, setOrderData] = useState<
     { id: string; status: string } | undefined
   >();
@@ -81,6 +81,10 @@ const OrderTable = (props: TOrderTable) => {
 
         setOrderData(undefined);
         handleToggleConfirmModal();
+        toast({
+          title: "سفارش تایید شد.",
+          variant: "success",
+        });
       } catch (e) {
         router.push("/500");
       }
@@ -89,10 +93,6 @@ const OrderTable = (props: TOrderTable) => {
 
   const handleToggleConfirmModal = () => {
     setOpenConfirmModal((prev) => !prev);
-  };
-
-  const handleToggleNotificationModal = () => {
-    setOpenNotificationModal((prev) => !prev);
   };
 
   const hoverClasses = useCallback((status: string) => {
@@ -117,36 +117,55 @@ const OrderTable = (props: TOrderTable) => {
   return (
     <>
       <Table className="overflow-hidden relative">
-        <TableHeader className="sticky top-0 bg-white z-10 ">
+        <TableHeader className="sticky top-0 bg-white z-10">
           <TableRow>
-            <TableHead className="w-[120px] text-center">نوع درخواست</TableHead>
-            <TableHead className="text-center">مقدار</TableHead>
-            <TableHead className="text-center">نرخ</TableHead>
-            <TableHead className="text-center">توضیحات</TableHead>
-            <TableHead className="text-center">وضعیت</TableHead>
+            <TableHead className="w-[120px] text-center  lg:text-sm text-xs px-0 lg:px-4">
+              نوع درخواست
+            </TableHead>
+            <TableHead className="text-center  lg:text-sm text-xs px-0 lg:px-4">
+              مقدار
+            </TableHead>
+            <TableHead className="text-center  lg:text-sm text-xs px-0 lg:px-4">
+              نرخ
+            </TableHead>
+            <TableHead className="text-center  lg:text-sm text-xs px-0 lg:px-4">
+              توضیحات
+            </TableHead>
+            <TableHead className="text-center  lg:text-sm text-xs px-0 lg:px-4">
+              وضعیت
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {orders?.length
             ? orders.map((order) => (
                 <TableRow
-                  className={cn("text-center", hoverClasses(order.status))}
+                  className={cn("text-center ", hoverClasses(order.status))}
                   onClick={() => {
                     if (order.status !== "pending") return;
                     handleToggleConfirmModal();
                     setOrderData({ id: order._id, status: order.status });
                   }}
                 >
-                  <TableCell className="font-medium">
+                  <TableCell className="font-medium  lg:text-sm text-xs">
                     {translate[order.type]}
                   </TableCell>
-                  <TableCell className="p-1">{order.amount}</TableCell>
-                  <TableCell className="p-1">{order.price} ریال</TableCell>
-                  <TableCell className="p-1">{order.description}</TableCell>
-                  <TableCell className="p-1">
+                  <TableCell className="p-1  lg:text-sm text-xs">
+                    {order.amount}
+                  </TableCell>
+                  <TableCell className="p-1  lg:text-sm text-xs">
+                    {order.price} ریال
+                  </TableCell>
+                  <TableCell className="p-1  lg:text-sm text-xs">
+                    {order.description}
+                  </TableCell>
+                  <TableCell className="p-1  lg:text-sm text-xs">
                     <Button
                       variant={variantMapper[order.status]}
-                      className={cn(hoverClasses(order.status))}
+                      className={cn(
+                        hoverClasses(order.status),
+                        "text-xs  lg:text-sm  p-2"
+                      )}
                     >
                       {translate[order.status]}
                     </Button>
@@ -161,7 +180,7 @@ const OrderTable = (props: TOrderTable) => {
           openModal={openConfirmModal}
           toggleModalHandler={handleToggleConfirmModal}
         >
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="w-[90%] lg:max-w-[415px]">
             <DialogHeader>
               <DialogTitle>آیا مطمئن هستید ؟</DialogTitle>
             </DialogHeader>
@@ -176,16 +195,6 @@ const OrderTable = (props: TOrderTable) => {
           </DialogContent>
         </ConfirmModal>
       )}
-      <ConfirmModal
-        openModal={openNotificationModal}
-        toggleModalHandler={handleToggleNotificationModal}
-      >
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>یک سفارش جدید دارید.</DialogTitle>
-          </DialogHeader>
-        </DialogContent>
-      </ConfirmModal>
     </>
   );
 };

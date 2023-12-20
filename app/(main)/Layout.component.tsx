@@ -5,6 +5,7 @@ import * as React from "react";
 import Header from "./Header";
 import { useStore } from "@/store/store";
 import io from "socket.io-client";
+import { cn } from "@/lib/utils";
 
 type TLayoutComponent = { children: React.ReactNode };
 
@@ -17,6 +18,8 @@ const LayoutComponent = (props: TLayoutComponent) => {
     setOpen((prev) => !prev);
   };
 
+  console.log(open, "open");
+
   React.useEffect(() => {
     const socket = io(process.env.NEXT_PUBLIC_API_BASE_URL!, {
       // secure: true,
@@ -28,18 +31,21 @@ const LayoutComponent = (props: TLayoutComponent) => {
   return (
     <>
       <div
-        className={` ${
-          open ? "w-0 p-0" : "w-60 p-3 "
-        } flex flex-col h-screen bg-primary shadow duration-300`}
+        className={cn(
+          "flex flex-col h-screen bg-primary shadow duration-300",
+          !open ? "w-0 p-0" : "lg:w-44 p-3 w-20"
+        )}
       >
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            {!open && (
-              <h2 className="text-xl font-bold text-white">امیر گلد</h2>
+            {open && (
+              <h2 className="font-bold text-white text-sm lg:text-xl">
+                امیر گلد
+              </h2>
             )}
           </div>
 
-          {!open && (
+          {open && (
             <div className="flex-1">
               <ul className="pt-2 pb-4 space-y-1 text-sm">
                 <li className="rounded-sm">

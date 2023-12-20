@@ -89,7 +89,7 @@ const BuySellModal: React.FC<IBuySellModal> = ({
         toggleModalHandler();
       }}
     >
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-[90%] lg:max-w-[415px]">
         <DialogHeader>
           <DialogTitle>درخواست {isBuy ? "خرید" : "فروش"}</DialogTitle>
           <DialogDescription
