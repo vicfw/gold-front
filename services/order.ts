@@ -25,10 +25,10 @@ export class OrderService {
     });
   }
 
-  async getOrders(currentDate: string): Promise<AxiosResponse<OrderResponse>> {
+  async getOrders(currentDate?: string): Promise<AxiosResponse<OrderResponse>> {
     return await axiosInstance.get(`/orders`, {
       params: {
-        createdDate: currentDate,
+        createdDate: currentDate ?? undefined,
       },
       headers: {
         Authorization: `Bearer ${this.accessToken}`,

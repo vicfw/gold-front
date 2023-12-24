@@ -11,18 +11,18 @@ export const metadata: Metadata = {
 export default async function AuthenticationPage() {
   const cookie = cookies().get("jwt")?.value;
 
-  if (cookie) {
-    try {
-      const result = await isLoggedIn(cookie);
-      const data = result?.data.data.data;
+  if (cookie?.length) {
+    const result = await isLoggedIn(cookie);
+    const data = result?.data.data.data;
 
-      if (data.role === "admin") {
-        redirect("/gold-admin");
-      } else {
-        redirect("/user");
-      }
-    } catch (e) {
-      redirect("/login");
+    if (!Object.keys(data).length) {
+      redirect("/403");
+    }
+
+    if (data.role === "admin") {
+      redirect("/gold-admin");
+    } else {
+      redirect("/user");
     }
   }
 
