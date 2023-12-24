@@ -21,7 +21,7 @@ const LayoutComponent = (props: TLayoutComponent) => {
   console.log(open, "open");
 
   React.useEffect(() => {
-    const socket = io(process.env.NEXT_PUBLIC_API_BASE_URL!, {
+    const socket = io(process.env.API_BASE_URL!, {
       // secure: true,
       transports: ["websocket"],
     });
