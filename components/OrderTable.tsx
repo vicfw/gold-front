@@ -11,13 +11,13 @@ import {
 import { cn } from "@/lib/utils";
 import { OrderService } from "@/services/order";
 import { Order } from "@/types";
-import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import ConfirmModal from "./ConfirmModal";
 import { DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { useStore } from "@/store/store";
 import { useToast } from "@/components/ui/use-toast";
+import { utcToZonedTime, format } from "date-fns-tz";
 
 type TOrderTable = {
   renderPage: "user" | "admin";
@@ -34,6 +34,10 @@ const OrderTable = (props: TOrderTable) => {
   const [orderData, setOrderData] = useState<
     { id: string; status: string } | undefined
   >();
+
+  const iranTimezone = "Asia/Tehran";
+  const utcDate = new Date();
+  const iranDate = utcToZonedTime(utcDate, iranTimezone);
 
   const translate: Record<string, string> = {
     buy: "خرید",
@@ -64,7 +68,9 @@ const OrderTable = (props: TOrderTable) => {
   const getTodayOrders = async () => {
     const service = new OrderService();
     try {
-      const result = await service.getOrders(format(new Date(), "yyyy-MM-dd"));
+      const result = await service.getOrders(
+        format(iranDate, "yyyy-MM-dd", { timeZone: iranTimezone })
+      );
       setOrders(result.data.data.orders);
     } catch (e) {
       router.push("/500");
