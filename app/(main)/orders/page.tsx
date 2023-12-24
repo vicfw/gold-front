@@ -1,19 +1,22 @@
 import UserProvider from "@/components/UserProvider";
-import { authGuard } from "@/utils/AuthGuard";
-import OrdersTable from "./OrderTable";
-
-export const metadata = {
-  title: "سفارشات",
-};
+import React from "react";
+import { cookies } from "next/headers";
+import { isLoggedIn } from "@/utils/isLoggedIn";
+import { redirect } from "next/navigation";
 
 const OrdersPage = async () => {
-  const data = await authGuard("admin");
+  const cookie = cookies().get("jwt")?.value;
+  const result = await isLoggedIn(cookie).catch((e) => redirect("/login"));
+  const data = result.data.data.data;
+
+  if (data.role !== "admin") {
+    redirect("/login");
+  }
 
   return (
-    <>
-      <OrdersTable />
+    <div className="container">
       <UserProvider user={data} />
-    </>
+    </div>
   );
 };
 
