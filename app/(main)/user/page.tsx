@@ -1,14 +1,22 @@
-import OrderTable from "@/components/OrderTable";
 import UserProvider from "@/components/UserProvider";
-import { authGuard } from "@/utils/AuthGuard";
+import { isLoggedIn } from "@/utils/isLoggedIn";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import SellBuy from "./SellBuy";
+import OrderTable from "@/components/OrderTable";
 
 export const metadata = {
   title: "Dashboard",
 };
 
 const UserPage = async () => {
-  const data = await authGuard("user");
+  const cookie = cookies().get("jwt")?.value;
+  const result = await isLoggedIn(cookie).catch((e) => redirect("/login"));
+  const data = result.data.data.data;
+
+  if (data.role !== "user") {
+    redirect("/login");
+  }
 
   return (
     <div className="h-[calc(100%-4rem)] p-3 lg:p-10 overflow-auto">
