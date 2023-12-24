@@ -35,7 +35,7 @@ const OrderTable = (props: TOrderTable) => {
     { id: string; status: string } | undefined
   >();
 
-  const iranTimezone = "Asia/Tehran";
+  const iranTimezone = "Europe/Berlin";
   const utcDate = new Date();
   const iranDate = utcToZonedTime(utcDate, iranTimezone);
 
