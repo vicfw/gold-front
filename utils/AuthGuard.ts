@@ -5,6 +5,8 @@ import { User } from "@/types";
 
 export const authGuard = async (userType: "user" | "admin"): Promise<User> => {
   const cookie = cookies().get("jwt")?.value;
+  console.log(cookie, "cookie");
+
   const result = await isLoggedIn(cookie).catch((e) => redirect("/login"));
   const data = result.data.data.data;
 
