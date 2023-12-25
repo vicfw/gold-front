@@ -4,14 +4,21 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import SellBuy from "./SellBuy";
 import OrderTable from "@/components/OrderTable";
+import { AuthService } from "@/services/auth";
 
 export const metadata = {
   title: "Dashboard",
 };
 
 const UserPage = async () => {
+  const authService = new AuthService();
   const cookie = cookies().get("jwt")?.value;
-  const result = await isLoggedIn(cookie).catch((e) => redirect("/login"));
+  const result = await isLoggedIn(cookie).catch((e) => {
+    if (cookie) {
+      authService.logout();
+    }
+    redirect("/login");
+  });
   const data = result.data.data.data;
 
   if (data.role !== "user") {
