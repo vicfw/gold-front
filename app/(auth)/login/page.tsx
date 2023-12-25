@@ -12,12 +12,8 @@ export default async function AuthenticationPage() {
   const cookie = cookies().get("jwt")?.value;
 
   if (cookie?.length) {
-    const result = await isLoggedIn(cookie);
+    const result = await isLoggedIn(cookie).catch((e) => {});
     const data = result?.data.data.data;
-
-    if (!Object.keys(data).length) {
-      redirect("/403");
-    }
 
     if (data.role === "admin") {
       redirect("/gold-admin");
