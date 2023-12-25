@@ -3,6 +3,7 @@ import { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { UserAuthForm } from "./components/AuthForm";
+import { AuthService } from "@/services/auth";
 export const metadata: Metadata = {
   title: "ورود",
   description: "ورود",
@@ -10,9 +11,14 @@ export const metadata: Metadata = {
 
 export default async function AuthenticationPage() {
   const cookie = cookies().get("jwt")?.value;
+  const authService = new AuthService();
 
   if (cookie?.length) {
-    const result = await isLoggedIn(cookie).catch((e) => {});
+    const result = await isLoggedIn(cookie).catch((e) => {
+      if (cookie) {
+        authService.logout();
+      }
+    });
     const data = result?.data.data.data;
 
     if (data.role === "admin") {
