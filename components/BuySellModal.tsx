@@ -33,38 +33,39 @@ const BuySellModal: React.FC<IBuySellModal> = ({
   const { toast } = useToast();
   const isBuy = type === "buy";
   const [amount, setAmount] = useState<number | undefined>();
-  const [price, setPrice] = useState<string>("");
+  const [price, setPrice] = useState<number | undefined>();
   const goldValue = 4.3318;
 
   const handleAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!priceProp) return;
 
-    const inputValue = parseInt(e.target.value);
+    const inputValue = parseFloat(e.target.value);
     const amountValue = isNaN(inputValue) ? undefined : inputValue;
 
     setAmount(amountValue);
 
     const actualPrice = (priceProp / goldValue) * (amountValue || 0);
     const roundedPrice = Math.round(actualPrice);
-    setPrice(`${roundedPrice.toLocaleString()} ریال`);
+    setPrice(roundedPrice);
   };
 
   const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!priceProp) return;
+    const inputValue = parseFloat(e.target.value);
+    const amountValue = isNaN(inputValue) ? undefined : inputValue;
 
-    const numericInput = e.target.value.replace(/[^0-9]/g, "");
-    setPrice(`${parseInt(numericInput).toLocaleString()} ریال`);
+    setPrice(amountValue);
 
-    if (numericInput !== "") {
-      const actualPrice = (priceProp * goldValue) / parseInt(numericInput, 10);
-      setAmount(Math.round(actualPrice));
+    if (amountValue) {
+      const actualPrice = (amountValue || 0) / (priceProp * goldValue);
+      setAmount(parseFloat(actualPrice.toFixed(2)));
     } else {
       setAmount(undefined);
     }
   };
 
   const handleInputFocus = () => {
-    price && setPrice("");
+    price && setPrice(undefined);
     amount && setAmount(undefined);
   };
 
@@ -72,7 +73,7 @@ const BuySellModal: React.FC<IBuySellModal> = ({
     if (!price || !amount) return;
 
     const service = new OrderService();
-    await service.createOrder({ type, price: parseInt(price), amount });
+    await service.createOrder({ type, price: price, amount });
     socket.emit("orderSubmit");
     toast({
       title: "سفارش شما ثبت شد.",
@@ -96,7 +97,7 @@ const BuySellModal: React.FC<IBuySellModal> = ({
             className={cn(isBuy ? "text-green-600" : "text-red-600")}
           >
             {isBuy ? "خرید" : "فروش"} آبشده {isBuy ? "از" : "به"} ما با نرخ{" "}
-            {priceProp}
+            {priceProp?.toLocaleString()}
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -116,17 +117,16 @@ const BuySellModal: React.FC<IBuySellModal> = ({
           </div>
           <div className="flex flex-col gap-3">
             <Label htmlFor="price" className="text-right">
-              مبلغ قابل پرداخت
+              مبلغ قابل پرداخت (ریال)
             </Label>
             <Input
               id="price"
               type="text"
               className="col-span-3"
-              value={price}
+              value={price || ""}
               onChange={handlePriceChange}
               placeholder="مبلغ مورد نظر خود را وارد نمایید"
               onFocus={handleInputFocus}
-              pattern="[0-9]*"
             />
           </div>
         </div>
