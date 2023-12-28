@@ -17,6 +17,7 @@ export class OrderService {
     type: string;
     amount: number;
     price: number;
+    user: string;
   }): Promise<AxiosResponse<OrderResponse>> {
     return await axiosInstance.post("/orders", values, {
       headers: {

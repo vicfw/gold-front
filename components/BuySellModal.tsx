@@ -29,7 +29,7 @@ const BuySellModal: React.FC<IBuySellModal> = ({
   toggleModalHandler,
   price: priceProp,
 }) => {
-  const { socket } = useStore((state) => state);
+  const { socket, user } = useStore((state) => state);
   const { toast } = useToast();
   const isBuy = type === "buy";
   const [amount, setAmount] = useState<number | undefined>();
@@ -73,7 +73,7 @@ const BuySellModal: React.FC<IBuySellModal> = ({
     if (!price || !amount) return;
 
     const service = new OrderService();
-    await service.createOrder({ type, price: price, amount });
+    await service.createOrder({ type, price: price, amount, user: user._id });
     socket.emit("orderSubmit");
     toast({
       title: "سفارش شما ثبت شد.",

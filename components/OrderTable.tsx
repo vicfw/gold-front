@@ -128,6 +128,11 @@ const OrderTable = (props: TOrderTable) => {
             <TableHead className="w-[120px] text-center  lg:text-sm text-xs px-0 lg:px-4">
               نوع درخواست
             </TableHead>
+            {renderPage === "admin" && (
+              <TableHead className="w-[120px] text-center  lg:text-sm text-xs px-0 lg:px-4">
+                نام کاربر
+              </TableHead>
+            )}
             <TableHead className="text-center  lg:text-sm text-xs px-0 lg:px-4">
               مقدار
             </TableHead>
@@ -156,6 +161,11 @@ const OrderTable = (props: TOrderTable) => {
                   <TableCell className="font-medium  lg:text-sm text-xs">
                     {translate[order.type]}
                   </TableCell>
+                  {renderPage === "admin" && (
+                    <TableCell className="font-medium  lg:text-sm text-xs">
+                      {order.user.name}
+                    </TableCell>
+                  )}
                   <TableCell className="p-1  lg:text-sm text-xs">
                     {order.amount}
                   </TableCell>

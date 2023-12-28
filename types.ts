@@ -21,6 +21,7 @@ export interface Order {
   amount: number;
   price: number;
   description: string;
+  user: User;
   createdAt: string;
   updatedAt: string;
 }
