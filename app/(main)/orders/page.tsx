@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { isLoggedIn } from "@/utils/isLoggedIn";
 import { redirect } from "next/navigation";
 import { AuthService } from "@/services/auth";
+import OrdersTable from "./OrderTable";
 
 const OrdersPage = async () => {
   const authService = new AuthService();
@@ -22,6 +23,7 @@ const OrdersPage = async () => {
 
   return (
     <div className="container">
+      <OrdersTable />
       <UserProvider user={data} />
     </div>
   );

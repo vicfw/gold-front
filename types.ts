@@ -25,3 +25,14 @@ export interface Order {
   createdAt: string;
   updatedAt: string;
 }
+
+export type Variant =
+  | "link"
+  | "default"
+  | "destructive"
+  | "success"
+  | "outline"
+  | "secondary"
+  | "ghost"
+  | null
+  | undefined;

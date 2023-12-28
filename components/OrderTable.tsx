@@ -18,6 +18,7 @@ import { DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { useStore } from "@/store/store";
 import { useToast } from "@/components/ui/use-toast";
 import { utcToZonedTime, format } from "date-fns-tz";
+import { translate, variantMapper } from "@/utils/constants";
 
 type TOrderTable = {
   renderPage: "user" | "admin";
@@ -39,32 +40,6 @@ const OrderTable = (props: TOrderTable) => {
   const utcDate = new Date();
   const iranDate = utcToZonedTime(utcDate, iranTimezone);
 
-  const translate: Record<string, string> = {
-    buy: "خرید",
-    sell: "فروش",
-    pending: "در انتظار",
-    confirmed: "تایید شده",
-    rejected: "رد شده",
-    unknown: "نامشخص",
-  };
-  type Variant =
-    | "link"
-    | "default"
-    | "destructive"
-    | "success"
-    | "outline"
-    | "secondary"
-    | "ghost"
-    | null
-    | undefined;
-
-  const variantMapper: Record<string, Variant> = {
-    pending: "info" as Variant,
-    confirmed: "success",
-    rejected: "destructive",
-    unknown: "warning" as Variant,
-  };
-
   const getTodayOrders = async () => {
     const service = new OrderService();
     try {
@@ -72,9 +47,7 @@ const OrderTable = (props: TOrderTable) => {
         format(iranDate, "yyyy-MM-dd", { timeZone: iranTimezone })
       );
       setOrders(result.data.data.orders);
-    } catch (e) {
-      router.push("/500");
-    }
+    } catch (e) {}
   };
 
   const confirmOrder = async () => {
@@ -91,9 +64,7 @@ const OrderTable = (props: TOrderTable) => {
           title: "سفارش تایید شد.",
           variant: "success",
         });
-      } catch (e) {
-        router.push("/500");
-      }
+      } catch (e) {}
     }
   };
 

@@ -20,7 +20,6 @@ export default async function AuthenticationPage() {
       }
     });
     const data = result?.data.data.data;
-
     if (data.role === "admin") {
       redirect("/gold-admin");
     } else {
