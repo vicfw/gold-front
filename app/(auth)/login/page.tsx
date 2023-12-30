@@ -23,9 +23,9 @@ export default async function AuthenticationPage() {
       }
     );
     const data = result?.data.data.data;
-    console.log(data, "data in login");
+    console.log(cookie, "cookie");
 
-    if (data) {
+    if (data && !cookie.includes("loggedout")) {
       if (data?.role === "admin") {
         redirect("/gold-admin");
       } else {
