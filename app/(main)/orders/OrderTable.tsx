@@ -25,11 +25,11 @@ const OrdersTable = () => {
   const columns: ColumnDef<Order>[] = [
     {
       accessorKey: "type",
-      header: () => <div className="text-right">نوع درخواست</div>,
+      header: () => <div className="text-right w-20">نوع درخواست</div>,
       cell: ({ row }) => {
         const value = row.getValue("type");
         const formatted = translate[value as string];
-        return <div className="text-right font-medium">{formatted}</div>;
+        return <div className="text-right font-medium ">{formatted}</div>;
       },
     },
     {
@@ -92,7 +92,7 @@ const OrdersTable = () => {
   }, []);
 
   return (
-    <div className="h-[50vh]">
+    <div className="">
       {orders?.length ? <DataTable data={orders} columns={columns} /> : null}
     </div>
   );

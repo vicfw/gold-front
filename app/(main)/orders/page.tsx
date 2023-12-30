@@ -22,7 +22,7 @@ const OrdersPage = async () => {
   }
 
   return (
-    <div className="container">
+    <div className="py-5 lg:p-10">
       <OrdersTable />
       <UserProvider user={data} />
     </div>
