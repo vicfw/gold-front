@@ -21,13 +21,12 @@ const Header = (props: THeader) => {
   const { handleToggleSidebar } = props;
   const { user, removeUser } = useStore((state) => state);
   const router = useRouter();
-  const logout = () => {
+  const logout = async () => {
     const service = new AuthService();
     try {
-      service.logout();
+      await service.logout();
       removeUser();
-      // router.replace("/login");
-      router.refresh();
+      router.replace("/login");
     } catch (e) {}
   };
 
