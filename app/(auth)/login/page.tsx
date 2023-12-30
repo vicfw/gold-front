@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 export default async function AuthenticationPage() {
   const cookie = cookies().get("jwt")?.value;
   const authService = new AuthService();
+  console.log(cookie, "cookie");
 
   if (cookie && !cookie?.includes("loggedout")) {
     const result = await isLoggedIn(cookie).catch(
@@ -23,7 +24,6 @@ export default async function AuthenticationPage() {
       }
     );
     const data = result?.data.data.data;
-    console.log(cookie, "cookie");
 
     if (data && !cookie.includes("loggedout")) {
       if (data?.role === "admin") {
