@@ -17,9 +17,7 @@ export default async function AuthenticationPage() {
   if (cookie?.length) {
     const result = await isLoggedIn(cookie).catch(
       (e: AxiosError<{ message: string }>) => {
-        if (e.response?.data.message.includes("JWT EXPIRED")) {
-          authService.logout();
-        }
+        authService.logout();
       }
     );
     const data = result?.data.data.data;
