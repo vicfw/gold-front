@@ -26,7 +26,8 @@ const Header = (props: THeader) => {
     try {
       service.logout();
       removeUser();
-      router.replace("/login");
+      // router.replace("/login");
+      router.refresh();
     } catch (e) {}
   };
 
