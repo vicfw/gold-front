@@ -1,9 +1,10 @@
 import { isLoggedIn } from "@/utils/isLoggedIn";
 import { Metadata } from "next";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { UserAuthForm } from "./components/AuthForm";
 import { AuthService } from "@/services/auth";
+import { AxiosError } from "axios";
 export const metadata: Metadata = {
   title: "ورود",
   description: "ورود",
@@ -14,16 +15,21 @@ export default async function AuthenticationPage() {
   const authService = new AuthService();
 
   if (cookie?.length) {
-    const result = await isLoggedIn(cookie).catch((e) => {
-      if (cookie) {
-        authService.logout();
+    const result = await isLoggedIn(cookie).catch(
+      (e: AxiosError<{ message: string }>) => {
+        if (e.response?.data.message.includes("JWT EXPIRED")) {
+          authService.logout();
+        }
       }
-    });
+    );
     const data = result?.data.data.data;
-    if (data.role === "admin") {
-      redirect("/gold-admin");
-    } else {
-      redirect("/user");
+
+    if (data) {
+      if (data?.role === "admin") {
+        redirect("/gold-admin");
+      } else {
+        redirect("/user");
+      }
     }
   }
 
